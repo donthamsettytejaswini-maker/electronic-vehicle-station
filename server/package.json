@@ -1,0 +1,40 @@
+{
+  "name": "evcharge-server",
+  "version": "1.0.0",
+  "description": "EVCharge Backend API - Smart EV Charging Station Management and Slot Booking System",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js",
+    "seed:admin": "node src/scripts/seedAdmin.js",
+    "seed:phase2": "node src/scripts/seedPhase2.js",
+    "seed:phase4": "node src/scripts/seedPhase4.js",
+    "seed:phase5": "node src/scripts/seedPhase5.js",
+    "seed:phase6": "node src/scripts/seedPhase6.js",
+    "seed:phase7": "node src/scripts/seedPhase7.js",
+    "test:phase4": "node src/scripts/testPhase4Api.js",
+    "test:phase5": "node src/scripts/testPhase5Api.js",
+    "test:phase6": "node src/scripts/testPhase6Api.js",
+    "test:phase7": "node src/scripts/testPhase7Api.js"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "compression": "^1.8.2",
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "express-rate-limit": "^8.7.0",
+    "express-validator": "^7.1.0",
+    "helmet": "^8.3.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.4.1",
+    "morgan": "^1.10.0",
+    "qrcode": "^1.5.4",
+    "socket.io": "^4.8.3",
+    "stripe": "^22.6.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.2"
+  }
+}

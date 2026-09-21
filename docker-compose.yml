@@ -1,0 +1,56 @@
+version: '3.8'
+
+services:
+  # MongoDB Atlas / Local MongoDB
+  mongodb:
+    image: mongo:6.0
+    container_name: evcharge-mongo
+    restart: unless-stopped
+    ports:
+      - '27017:27017'
+    volumes:
+      - mongo_data:/data/db
+    environment:
+      - MONGO_INITDB_DATABASE=evcharge
+
+  # Express.js Backend Service
+  backend:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    container_name: evcharge-backend
+    restart: unless-stopped
+    ports:
+      - '5000:5000'
+    environment:
+      - PORT=5000
+      - NODE_ENV=production
+      - MONGO_URI=mongodb://mongodb:27017/evcharge
+      - JWT_SECRET=production_super_secret_jwt_key_evcharge_2026
+      - CLIENT_URL=http://localhost:3000
+      - ENABLE_MAPS=false
+      - ENABLE_NOTIFICATIONS=true
+      - ENABLE_REVIEWS=true
+      - ENABLE_DEMAND_PREDICTION=true
+      - ENABLE_DYNAMIC_PRICING=true
+      - ENABLE_FLEET=true
+      - ENABLE_OCPP=true
+      - ENABLE_LOAD_MANAGEMENT=true
+    depends_on:
+      - mongodb
+
+  # React.js Client Frontend
+  frontend:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    container_name: evcharge-frontend
+    restart: unless-stopped
+    ports:
+      - '3000:80'
+    depends_on:
+      - backend
+
+volumes:
+  mongo_data:
+    driver: local
