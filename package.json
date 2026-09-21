@@ -1,0 +1,24 @@
+{
+  "name": "electronic-vehicle-station",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Smart EV Charging Station Management and Slot Booking System",
+  "scripts": {
+    "install:all": "npm install --prefix server && npm install --prefix client",
+    "client": "npm run dev --prefix client",
+    "server": "npm run dev --prefix server",
+    "dev": "npm run dev --prefix client",
+    "build": "npm run build --prefix client",
+    "start": "npm start --prefix server"
+  },
+  "keywords": [
+    "ev",
+    "charging-station",
+    "react",
+    "node",
+    "express",
+    "mongodb"
+  ],
+  "author": "",
+  "license": "ISC"
+}
