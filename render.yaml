@@ -1,6 +1,6 @@
 services:
   # ---------------------------------------------------------------------------
-  # 1. Backend Web Service (Express REST API & Socket.IO Server)
+  # 1. Backend Web Service (Node.js Express REST API & Socket.IO Server)
   # ---------------------------------------------------------------------------
   - type: web
     name: evcharge-server
@@ -24,9 +24,9 @@ services:
         value: 7d
       - key: CLIENT_URL
         fromService:
-          type: static_site
+          type: web
           name: evcharge-client
-          property: url
+          property: host
       - key: PAYMENT_PROVIDER
         value: mock
       - key: BILLING_CURRENCY
@@ -53,9 +53,9 @@ services:
   # ---------------------------------------------------------------------------
   # 2. Frontend Static Site (React / Vite Single Page Application)
   # ---------------------------------------------------------------------------
-  - type: static_site
+  - type: web
     name: evcharge-client
-    plan: free
+    runtime: static
     region: oregon
     rootDir: client
     buildCommand: npm install && npm run build
@@ -69,13 +69,13 @@ services:
         fromService:
           type: web
           name: evcharge-server
-          property: url
+          property: host
           postfix: /api
       - key: VITE_SOCKET_URL
         fromService:
           type: web
           name: evcharge-server
-          property: url
+          property: host
       - key: VITE_ENABLE_MAPS
         value: true
       - key: VITE_ENABLE_NOTIFICATIONS
