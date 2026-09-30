@@ -36,8 +36,8 @@ const BookSlot = () => {
           getStations({ limit: 50 }),
           getVehicles(),
         ]);
-        setStations(stationRes.data || []);
-        const userVehicles = vehicleRes.data || [];
+        setStations(Array.isArray(stationRes.data) ? stationRes.data : (stationRes.data?.stations || stationRes.data?.items || []));
+        const userVehicles = Array.isArray(vehicleRes.data) ? vehicleRes.data : (vehicleRes.data?.vehicles || vehicleRes.data?.items || []);
         setVehicles(userVehicles);
 
         // Select default vehicle if available
@@ -46,7 +46,8 @@ const BookSlot = () => {
 
         // If preselected station exists
         if (preselectedStationId) {
-          const st = (stationRes.data || []).find((s) => s._id === preselectedStationId);
+          const stList = Array.isArray(stationRes.data) ? stationRes.data : (stationRes.data?.stations || stationRes.data?.items || []);
+          const st = stList.find((s) => s._id === preselectedStationId);
           if (st) {
             setSelectedStation(st);
             if (preselectedChargerId) {
@@ -86,7 +87,8 @@ const BookSlot = () => {
     const fetchSlots = async () => {
       try {
         const res = await getAvailableSlots(selectedChargerId, date);
-        setSlotsData(res.data);
+        const booked = res.data?.bookedSlots || res.data?.bookings || (Array.isArray(res.data) ? res.data : []);
+        setSlotsData({ ...res.data, bookings: booked });
       } catch (err) {
         console.warn("Could not fetch slots:", err);
       }
@@ -118,8 +120,13 @@ const BookSlot = () => {
       };
 
       const res = await createBooking(payload);
-      const createdBooking = res.data;
-      navigate(`/bookings/confirmation/${createdBooking._id}`, { state: { booking: createdBooking } });
+      const createdBooking = res.data?.booking || res.data;
+      const bookingId = createdBooking?._id || res.data?._id;
+      if (bookingId) {
+        navigate(`/bookings/confirmation/${bookingId}`, { state: { booking: createdBooking } });
+      } else {
+        navigate('/bookings');
+      }
     } catch (err) {
       setError(err.response?.data?.message || "Booking creation failed. Please try a different slot.");
     } finally {

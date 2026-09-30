@@ -34,7 +34,7 @@ const ChargingSessionDetails = () => {
       try {
         setLoading(true);
         const res = await getSessionById(id);
-        setSession(res.data);
+        setSession(res.data?.session || res.data);
       } catch (err) {
         setError(err.response?.data?.message || "Failed to load session details.");
       } finally {

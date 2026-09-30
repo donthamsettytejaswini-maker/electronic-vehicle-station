@@ -25,7 +25,7 @@ const PaymentResult = () => {
       try {
         setLoading(true);
         const res = await getPaymentById(id);
-        setPayment(res.data);
+        setPayment(res.data?.payment || res.data);
       } catch (err) {
         setError(err.response?.data?.message || 'Failed to fetch payment status.');
       } finally {

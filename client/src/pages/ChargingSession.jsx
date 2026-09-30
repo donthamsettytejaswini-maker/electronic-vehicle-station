@@ -51,8 +51,9 @@ const ChargingSession = () => {
   const fetchSession = async () => {
     try {
       const res = await getSessionById(id);
-      setSession(res.data);
-      return res.data;
+      const sessionData = res.data?.session || res.data;
+      setSession(sessionData);
+      return sessionData;
     } catch (err) {
       setError(err.response?.data?.message || "Failed to load charging session.");
       return null;
@@ -76,8 +77,9 @@ const ChargingSession = () => {
         joinSessionRoom(id);
 
         const handleSocketUpdate = (updatedSession) => {
-          if (updatedSession && updatedSession._id === id) {
-            setSession(updatedSession);
+          const uSession = updatedSession?.session || updatedSession;
+          if (uSession && (uSession._id === id || uSession.id === id)) {
+            setSession(uSession);
             setConnectionStatus("live");
           }
         };
@@ -106,10 +108,11 @@ const ChargingSession = () => {
       pollIntervalRef.current = setInterval(async () => {
         try {
           const freshData = await getSessionById(id);
-          if (isMounted && freshData?.data) {
-            setSession(freshData.data);
+          const freshSession = freshData.data?.session || freshData.data;
+          if (isMounted && freshSession) {
+            setSession(freshSession);
             // Stop polling if session is completed or stopped
-            if (["completed", "stopped", "failed"].includes(freshData.data.status)) {
+            if (["completed", "stopped", "failed"].includes(freshSession.status)) {
               clearInterval(pollIntervalRef.current);
             }
           }
@@ -133,7 +136,7 @@ const ChargingSession = () => {
     try {
       setActionLoading(true);
       const res = await pauseSession(id);
-      setSession(res.data);
+      setSession(res.data?.session || res.data);
     } catch (err) {
       setError(err.response?.data?.message || "Failed to pause session.");
     } finally {
@@ -145,7 +148,7 @@ const ChargingSession = () => {
     try {
       setActionLoading(true);
       const res = await resumeSession(id);
-      setSession(res.data);
+      setSession(res.data?.session || res.data);
     } catch (err) {
       setError(err.response?.data?.message || "Failed to resume session.");
     } finally {
@@ -157,7 +160,7 @@ const ChargingSession = () => {
     try {
       setActionLoading(true);
       const res = await completeSession(id);
-      setSession(res.data);
+      setSession(res.data?.session || res.data);
       if (pollIntervalRef.current) clearInterval(pollIntervalRef.current);
     } catch (err) {
       setError(err.response?.data?.message || "Failed to complete session.");
@@ -170,7 +173,7 @@ const ChargingSession = () => {
     try {
       setActionLoading(true);
       const res = await stopSession(id, reason);
-      setSession(res.data);
+      setSession(res.data?.session || res.data);
       if (pollIntervalRef.current) clearInterval(pollIntervalRef.current);
     } catch (err) {
       setError(err.response?.data?.message || "Failed to stop session.");

@@ -58,6 +58,25 @@ const ChargerCard = ({
         </div>
       </div>
 
+      {/* User Book Port Button */}
+      {!isAdmin && (
+        <div className="pt-3">
+          {charger.status === 'available' ? (
+            <a
+              href={`/book-slot?stationId=${charger.stationId}&chargerId=${charger._id}`}
+              className="w-full py-2 bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 shadow-sm"
+            >
+              <Zap className="w-3.5 h-3.5 fill-white" />
+              <span>Book This Port</span>
+            </a>
+          ) : (
+            <span className="w-full py-2 bg-slate-100 text-slate-400 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 cursor-not-allowed">
+              <span>Port {charger.status}</span>
+            </span>
+          )}
+        </div>
+      )}
+
       {/* Admin Action Controls */}
       {isAdmin && (
         <div className="pt-3 flex items-center justify-between gap-2">

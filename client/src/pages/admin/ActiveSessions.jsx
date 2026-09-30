@@ -39,7 +39,8 @@ const ActiveSessions = () => {
     try {
       setLoading(true);
       const res = await getAllActiveSessions();
-      setSessions(res.data || []);
+      const items = Array.isArray(res.data) ? res.data : (res.data?.items || (Array.isArray(res) ? res : []));
+      setSessions(items);
     } catch (err) {
       setError(err.response?.data?.message || "Failed to fetch active charging sessions.");
     } finally {
@@ -58,7 +59,10 @@ const ActiveSessions = () => {
       const handleUpdate = () => {
         // Refresh active list upon any session telemetry broadcast
         getAllActiveSessions()
-          .then((res) => setSessions(res.data || []))
+          .then((res) => {
+            const items = Array.isArray(res.data) ? res.data : (res.data?.items || (Array.isArray(res) ? res : []));
+            setSessions(items);
+          })
           .catch((e) => console.warn(e));
       };
 

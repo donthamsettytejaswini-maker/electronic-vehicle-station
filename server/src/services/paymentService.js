@@ -55,16 +55,34 @@ const createPayment = async (sessionId, paymentMethod = 'mock_upi', provider = n
   return { payment };
 };
 
-// 2. Get payment by ID
+// 2. Get payment by ID (with fallback to reference or sessionId)
 const getPaymentById = async (paymentId, requestingUserId = null, isAdmin = false) => {
-  const payment = await Payment.findById(paymentId)
-    .populate('bookingId')
-    .populate('sessionId')
-    .populate('stationId')
-    .populate('chargerId')
-    .populate('vehicleId')
-    .populate('userId', 'name email phone')
-    .populate('refundedBy', 'name email');
+  const mongoose = require('mongoose');
+  let payment = null;
+
+  if (mongoose.Types.ObjectId.isValid(paymentId)) {
+    payment = await Payment.findById(paymentId)
+      .populate('bookingId')
+      .populate('sessionId')
+      .populate('stationId')
+      .populate('chargerId')
+      .populate('vehicleId')
+      .populate('userId', 'name email phone')
+      .populate('refundedBy', 'name email');
+  }
+
+  if (!payment) {
+    payment = await Payment.findOne({
+      $or: [{ paymentReference: paymentId }, { sessionId: paymentId }],
+    })
+      .populate('bookingId')
+      .populate('sessionId')
+      .populate('stationId')
+      .populate('chargerId')
+      .populate('vehicleId')
+      .populate('userId', 'name email phone')
+      .populate('refundedBy', 'name email');
+  }
 
   if (!payment) {
     const error = new Error('Payment record not found');
@@ -72,7 +90,8 @@ const getPaymentById = async (paymentId, requestingUserId = null, isAdmin = fals
     throw error;
   }
 
-  if (requestingUserId && !isAdmin && payment.userId._id.toString() !== requestingUserId.toString()) {
+  const paymentUserId = payment.userId?._id ? payment.userId._id.toString() : (payment.userId ? payment.userId.toString() : null);
+  if (requestingUserId && !isAdmin && paymentUserId && paymentUserId !== requestingUserId.toString()) {
     const error = new Error('Unauthorized access to payment record');
     error.statusCode = 403;
     throw error;
@@ -98,7 +117,8 @@ const getPaymentByReference = async (paymentReference, requestingUserId = null, 
     throw error;
   }
 
-  if (requestingUserId && !isAdmin && payment.userId._id.toString() !== requestingUserId.toString()) {
+  const paymentUserId = payment.userId?._id ? payment.userId._id.toString() : (payment.userId ? payment.userId.toString() : null);
+  if (requestingUserId && !isAdmin && paymentUserId && paymentUserId !== requestingUserId.toString()) {
     const error = new Error('Unauthorized access to payment record');
     error.statusCode = 403;
     throw error;

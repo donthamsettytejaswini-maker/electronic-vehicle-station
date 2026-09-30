@@ -20,13 +20,14 @@ const BookingQr = () => {
     try {
       setLoading(true);
       const bookingRes = await getBookingById(id);
-      setBooking(bookingRes.data);
+      const bookingData = bookingRes.data?.booking || bookingRes.data;
+      setBooking(bookingData);
 
       // Attempt to generate or load QR token for this booking
-      if (bookingRes.data?.status === "confirmed") {
+      if (bookingData?.status === "confirmed") {
         try {
           const qrRes = await generateBookingQr(id);
-          setQrData(qrRes.data);
+          setQrData(qrRes.data?.qrPayload ? qrRes.data : (qrRes.data?.qrData || qrRes.data));
         } catch (e) {
           console.warn("Could not auto-generate QR:", e);
         }

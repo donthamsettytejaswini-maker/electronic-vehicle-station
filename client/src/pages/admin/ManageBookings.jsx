@@ -51,9 +51,10 @@ const ManageBookings = () => {
         ...(stationFilter && { stationId: stationFilter }),
         ...(search && { search }),
       });
-      setBookings(res.data || []);
-      if (res.pagination) {
-        setPagination(res.pagination);
+      const items = Array.isArray(res.data) ? res.data : (res.data?.items || (Array.isArray(res) ? res : []));
+      setBookings(items);
+      if (res.pagination || res.data?.pagination) {
+        setPagination(res.pagination || res.data.pagination);
       }
     } catch (err) {
       console.warn("Error fetching all bookings:", err);

@@ -47,13 +47,15 @@ const Stations = () => {
         };
 
         const response = await getStations(params);
-        if (response.success && response.data) {
-          setStations(response.data.items || []);
+        const data = response.data || response;
+        if (data) {
+          const items = Array.isArray(data) ? data : (data.items || data.stations || []);
+          setStations(items);
           setPagination(
-            response.data.pagination || {
+            response.pagination || data.pagination || {
               page: currentPage,
               limit: 9,
-              total: response.data.items?.length || 0,
+              total: items.length,
               pages: 1,
             }
           );

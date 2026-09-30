@@ -43,7 +43,7 @@ const UserDashboard = () => {
           getActiveSession().catch(() => ({ data: null })),
         ]);
 
-        const userVehicles = vRes.data?.items || vRes.data || [];
+        const userVehicles = Array.isArray(vRes.data) ? vRes.data : (vRes.data?.vehicles || vRes.data?.items || []);
         setVehicleCount(userVehicles.length);
         const def = userVehicles.find((v) => v.isDefault) || userVehicles[0];
         setDefaultVehicle(def || null);
@@ -52,11 +52,13 @@ const UserDashboard = () => {
           setActiveStationCount(sRes.data.pagination.total);
         } else if (Array.isArray(sRes.data)) {
           setActiveStationCount(sRes.data.length);
+        } else if (sRes.data?.stations) {
+          setActiveStationCount(sRes.data.stations.length);
         }
 
-        const bookings = bRes.data || [];
+        const bookings = Array.isArray(bRes.data) ? bRes.data : (bRes.data?.items || []);
         setUpcomingBookingsCount(bookings.length);
-        setActiveSession(sessRes.data || null);
+        setActiveSession(bRes.data?.session || sessRes.data?.session || sessRes.data || null);
       } catch (err) {
         console.error('Failed to load dashboard metrics', err);
       } finally {

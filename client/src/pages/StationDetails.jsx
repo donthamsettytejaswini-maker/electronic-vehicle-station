@@ -37,9 +37,10 @@ const StationDetails = () => {
         setLoading(true);
         setError('');
         const response = await getStationById(id);
-        if (response.success && response.data) {
-          setStation(response.data.station);
-          setChargers(response.data.chargers || []);
+        const data = response.data || response;
+        if (data) {
+          setStation(data.station || data);
+          setChargers(data.chargers || []);
         }
       } catch (err) {
         setError(

@@ -56,9 +56,10 @@ const PaymentManagement = () => {
         ...(providerFilter && { provider: providerFilter }),
         ...(search && { search }),
       });
-      setPayments(res.data || []);
-      if (res.pagination) {
-        setPagination(res.pagination);
+      const items = Array.isArray(res.data) ? res.data : (res.data?.payments || res.data?.items || (Array.isArray(res) ? res : []));
+      setPayments(items);
+      if (res.pagination || res.data?.pagination) {
+        setPagination(res.pagination || res.data.pagination);
       }
     } catch (err) {
       console.warn('Error fetching admin payments:', err);

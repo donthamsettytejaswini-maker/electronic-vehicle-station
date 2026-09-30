@@ -5,10 +5,20 @@ import { Zap, Heart, Shield, HelpCircle } from 'lucide-react';
 
 const MainLayout = () => {
   return (
-    <div className="min-h-screen flex flex-col bg-slate-50 text-slate-800">
+    <div className="min-h-screen flex flex-col relative text-slate-100 bg-slate-950">
+      {/* Global Fixed Background Layer */}
+      <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+        <img
+          src="/ev-hero-bg.jpg"
+          alt="EV Charging Network Ambiance"
+          className="w-full h-full object-cover object-center scale-100 filter brightness-70 contrast-110"
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-slate-950/80 via-slate-950/60 to-slate-950/90" />
+      </div>
+
       <Navbar />
 
-      <main className="flex-1">
+      <main className="flex-1 relative z-10">
         <Outlet />
       </main>
 

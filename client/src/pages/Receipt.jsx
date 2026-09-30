@@ -15,7 +15,7 @@ const Receipt = () => {
       try {
         setLoading(true);
         const res = await getPaymentReceipt(id);
-        setReceipt(res.data);
+        setReceipt(res.data?.receipt || res.data);
       } catch (err) {
         setError(err.response?.data?.message || 'Failed to load receipt.');
       } finally {

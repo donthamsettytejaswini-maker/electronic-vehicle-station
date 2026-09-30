@@ -19,7 +19,8 @@ const BookingConfirmation = () => {
     try {
       setLoading(true);
       const res = await getBookingById(id);
-      setBooking(res.data);
+      const bookingData = res.data?.booking || res.data;
+      setBooking(bookingData);
     } catch (err) {
       setError(err.response?.data?.message || "Failed to load booking details.");
     } finally {
@@ -38,7 +39,7 @@ const BookingConfirmation = () => {
       setIsGeneratingQr(true);
       setError("");
       const res = await generateBookingQr(id);
-      setQrData(res.data);
+      setQrData(res.data?.qrPayload ? res.data : (res.data?.qrData || res.data));
     } catch (err) {
       setError(err.response?.data?.message || "Failed to generate check-in QR code.");
     } finally {

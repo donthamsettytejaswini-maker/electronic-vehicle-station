@@ -104,8 +104,13 @@ const CheckIn = () => {
         targetBatteryPercentage: Number(targetBattery),
       });
 
-      const newSession = res.data;
-      navigate(`/sessions/${newSession._id}`);
+      const newSession = res.data?.session || res.data;
+      const sessionId = newSession?._id || res.data?._id;
+      if (sessionId) {
+        navigate(`/sessions/${sessionId}`);
+      } else {
+        navigate('/charging-history');
+      }
     } catch (err) {
       setError(err.response?.data?.message || "Failed to start charging session.");
     } finally {

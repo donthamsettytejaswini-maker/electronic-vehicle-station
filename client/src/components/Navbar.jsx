@@ -56,20 +56,20 @@ const Navbar = () => {
   const navLinkClass = ({ isActive }) =>
     `px-2.5 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
       isActive
-        ? 'bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-400 font-bold'
-        : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800'
+        ? 'bg-emerald-500/20 text-emerald-400 font-bold border border-emerald-500/30'
+        : 'text-slate-300 hover:text-white hover:bg-white/10'
     }`;
 
   const mobileNavLinkClass = ({ isActive }) =>
     `flex items-center justify-between px-4 py-2.5 rounded-xl text-sm font-semibold transition-colors ${
       isActive
         ? 'bg-emerald-600 text-white font-bold shadow-sm'
-        : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
+        : 'text-slate-300 hover:bg-white/10'
     }`;
 
   return (
     <>
-      <header className="sticky top-0 z-40 bg-white/95 dark:bg-slate-900/95 backdrop-blur border-b border-slate-200 dark:border-slate-800">
+      <header className="sticky top-0 z-40 bg-slate-950/85 backdrop-blur-xl border-b border-white/10 shadow-lg">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             {/* Brand Logo */}
@@ -299,7 +299,7 @@ const Navbar = () => {
 
         {/* Mobile Drawer Menu */}
         {isMobileMenuOpen && (
-          <div className="lg:hidden border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-4 pt-3 pb-6 space-y-2 max-h-[80vh] overflow-y-auto">
+          <div className="lg:hidden border-t border-white/10 bg-slate-950/95 backdrop-blur-xl px-4 pt-3 pb-6 space-y-2 max-h-[80vh] overflow-y-auto">
             {isAuthenticated ? (
               <div className="space-y-1">
                 <NavLink to="/dashboard" onClick={closeMenu} className={mobileNavLinkClass}>

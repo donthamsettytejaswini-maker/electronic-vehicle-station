@@ -30,7 +30,7 @@ const BookingDetails = () => {
     try {
       setLoading(true);
       const res = await getBookingById(id);
-      setBooking(res.data);
+      setBooking(res.data?.booking || res.data);
     } catch (err) {
       setError(err.response?.data?.message || "Failed to load booking details.");
     } finally {

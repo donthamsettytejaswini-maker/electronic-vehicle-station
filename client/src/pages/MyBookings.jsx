@@ -29,7 +29,8 @@ const MyBookings = () => {
       const res = await getUserBookings({
         ...(statusFilter && { status: statusFilter }),
       });
-      setBookings(res.data || []);
+      const items = Array.isArray(res.data) ? res.data : (res.data?.items || (Array.isArray(res) ? res : []));
+      setBookings(items);
     } catch (err) {
       setError(err.response?.data?.message || "Failed to load bookings.");
     } finally {

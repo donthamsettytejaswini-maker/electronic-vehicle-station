@@ -59,9 +59,10 @@ const ChargingHistory = () => {
         ...(vehicleFilter && { vehicleId: vehicleFilter }),
       };
       const res = await getSessionHistory(params);
-      setSessions(res.data || []);
-      if (res.pagination) {
-        setPagination(res.pagination);
+      const items = Array.isArray(res.data) ? res.data : (res.data?.items || (Array.isArray(res) ? res : []));
+      setSessions(items);
+      if (res.pagination || res.data?.pagination) {
+        setPagination(res.pagination || res.data.pagination);
       }
     } catch (err) {
       console.warn("Error fetching sessions:", err);
@@ -151,7 +152,7 @@ const ChargingHistory = () => {
             <option value="">All Vehicles</option>
             {vehicles.map((v) => (
               <option key={v._id} value={v._id}>
-                {v.brand} {v.model} ({v.licensePlate})
+                {v.brand} {v.model} ({v.vehicleNumber || v.licensePlate || 'EV'})
               </option>
             ))}
           </select>
@@ -197,6 +198,9 @@ const ChargingHistory = () => {
         <div className="space-y-4">
           {sessions.map((sess) => {
             const isFinished = ["completed", "stopped", "failed"].includes(sess.status);
+            const isPaid = sess.paymentStatus === 'paid' || sess.paymentId?.status === 'paid' || sess.bookingId?.paymentStatus === 'paid';
+            const paymentId = sess.paymentId?._id || sess.paymentId;
+
             return (
               <div
                 key={sess._id}
@@ -218,7 +222,7 @@ const ChargingHistory = () => {
                   <div>
                     <span className="text-slate-400 font-medium block">Station</span>
                     <span className="font-bold text-slate-800 truncate block">
-                      {sess.stationId?.name}
+                      {sess.stationId?.name || "Station"}
                     </span>
                   </div>
 
@@ -239,7 +243,7 @@ const ChargingHistory = () => {
                   <div>
                     <span className="text-slate-400 font-medium block">Energy Delivered</span>
                     <span className="font-bold text-emerald-600 block">
-                      {Number(sess.energyConsumedKwh).toFixed(2)} kWh
+                      {Number(sess.energyConsumedKwh || 0).toFixed(2)} kWh
                     </span>
                   </div>
 
@@ -252,19 +256,25 @@ const ChargingHistory = () => {
 
                   <div>
                     <span className="text-slate-400 font-medium block">Payment Status</span>
-                    <span className="font-semibold text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full inline-block text-[10px]">
-                      Pending (Phase 5)
-                    </span>
+                    {isPaid ? (
+                      <span className="font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full inline-block text-[10px] border border-emerald-200">
+                        Paid
+                      </span>
+                    ) : (
+                      <span className="font-bold text-amber-700 bg-amber-50 px-2 py-0.5 rounded-full inline-block text-[10px] border border-amber-200">
+                        Pending
+                      </span>
+                    )}
                   </div>
                 </div>
 
-                <div className="pt-2 flex items-center justify-between">
+                <div className="pt-2 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                   <span className="text-[11px] text-slate-400">
                     Started: {sess.startedAt ? new Date(sess.startedAt).toLocaleString() : "—"}
                   </span>
 
-                  <div className="flex gap-2">
-                    {!isFinished && (
+                  <div className="flex items-center gap-2 flex-wrap">
+                    {!isFinished ? (
                       <Link
                         to={`/sessions/${sess._id}`}
                         className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition flex items-center gap-1"
@@ -272,12 +282,28 @@ const ChargingHistory = () => {
                         <Zap className="w-3.5 h-3.5" />
                         <span>Live Session</span>
                       </Link>
+                    ) : isPaid ? (
+                      <Link
+                        to={`/payments/${paymentId || sess._id}/receipt`}
+                        className="px-3 py-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 rounded-xl text-xs font-bold transition flex items-center gap-1"
+                      >
+                        <span>Receipt</span>
+                      </Link>
+                    ) : (
+                      <Link
+                        to={`/payments/checkout/${sess._id}`}
+                        className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition flex items-center gap-1 shadow-sm"
+                      >
+                        <span>Pay Bill</span>
+                        <ArrowRight className="w-3 h-3" />
+                      </Link>
                     )}
+
                     <Link
                       to={`/sessions/${sess._id}/details`}
                       className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold transition flex items-center gap-1"
                     >
-                      <span>View Details</span>
+                      <span>Details</span>
                       <ArrowRight className="w-3 h-3" />
                     </Link>
                   </div>

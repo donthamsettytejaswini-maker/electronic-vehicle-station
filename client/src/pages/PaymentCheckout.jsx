@@ -33,16 +33,17 @@ const PaymentCheckout = () => {
       setLoading(true);
       setError('');
       const res = await getInvoiceForSession(sessionId);
-      setInvoiceData(res.data);
+      const data = res.data?.invoice || res.data;
+      setInvoiceData(data);
 
       // If already paid, can navigate to receipt
-      if (res.data?.session?.paymentStatus === 'paid' && res.data?.existingPayment?._id) {
-        navigate(`/payments/${res.data.existingPayment._id}/receipt`);
+      if (data?.session?.paymentStatus === 'paid' && data?.existingPayment?._id) {
+        navigate(`/payments/${data.existingPayment._id}/receipt`);
         return;
       }
 
-      if (res.data?.existingPayment) {
-        setPaymentRecord(res.data.existingPayment);
+      if (data?.existingPayment) {
+        setPaymentRecord(data.existingPayment);
       }
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to calculate invoice for session.');
@@ -72,12 +73,17 @@ const PaymentCheckout = () => {
           paymentMethod: selectedMethod,
           provider: 'mock',
         });
-        pId = createRes.data._id;
-        setPaymentRecord(createRes.data);
+        const pData = createRes.data?.payment || createRes.data;
+        pId = pData?._id || createRes.data?._id;
+        setPaymentRecord(pData);
+      }
+
+      if (!pId) {
+        throw new Error('Unable to obtain payment identifier for checkout.');
       }
 
       // Step 2: Verify Mock Payment
-      const verifyRes = await verifyMockPayment(pId, {
+      await verifyMockPayment(pId, {
         action: 'success',
         paymentMethod: selectedMethod,
       });
@@ -85,7 +91,7 @@ const PaymentCheckout = () => {
       // Step 3: Redirect to payment result screen
       navigate(`/payments/result/${pId}`);
     } catch (err) {
-      setError(err.response?.data?.message || 'Payment simulation failed.');
+      setError(err.response?.data?.message || err.message || 'Payment simulation failed.');
     } finally {
       setIsProcessing(false);
     }
@@ -104,8 +110,13 @@ const PaymentCheckout = () => {
           paymentMethod: selectedMethod,
           provider: 'mock',
         });
-        pId = createRes.data._id;
-        setPaymentRecord(createRes.data);
+        const pData = createRes.data?.payment || createRes.data;
+        pId = pData?._id || createRes.data?._id;
+        setPaymentRecord(pData);
+      }
+
+      if (!pId) {
+        throw new Error('Unable to obtain payment identifier for checkout.');
       }
 
       const verifyRes = await verifyMockPayment(pId, {
@@ -116,7 +127,7 @@ const PaymentCheckout = () => {
 
       setFailureState(verifyRes.message || reason);
     } catch (err) {
-      setError(err.response?.data?.message || 'Payment failure trigger error.');
+      setError(err.response?.data?.message || err.message || 'Payment failure trigger error.');
     } finally {
       setIsProcessing(false);
     }

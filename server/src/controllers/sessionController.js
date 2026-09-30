@@ -119,7 +119,7 @@ const startSession = async (req, res, next) => {
     res.status(201).json({
       success: true,
       message: 'Charging session started successfully',
-      data: { session: populatedSession },
+      data: populatedSession,
     });
   } catch (error) {
     next(error);
@@ -152,7 +152,7 @@ const getSessionById = async (req, res, next) => {
 
     res.status(200).json({
       success: true,
-      data: { session },
+      data: session,
     });
   } catch (error) {
     next(error);
@@ -176,7 +176,7 @@ const getActiveSession = async (req, res, next) => {
 
     res.status(200).json({
       success: true,
-      data: { session },
+      data: session,
     });
   } catch (error) {
     next(error);
@@ -218,7 +218,7 @@ const pauseSession = async (req, res, next) => {
     res.status(200).json({
       success: true,
       message: 'Charging session paused',
-      data: { session },
+      data: session,
     });
   } catch (error) {
     next(error);
@@ -263,7 +263,7 @@ const resumeSession = async (req, res, next) => {
     res.status(200).json({
       success: true,
       message: 'Charging session resumed',
-      data: { session },
+      data: session,
     });
   } catch (error) {
     next(error);
@@ -311,7 +311,7 @@ const updateSession = async (req, res, next) => {
     res.status(200).json({
       success: true,
       message: 'Session telemetry updated',
-      data: { session },
+      data: session,
     });
   } catch (error) {
     next(error);
@@ -340,7 +340,7 @@ const completeSession = async (req, res, next) => {
       return res.status(200).json({
         success: true,
         message: 'Session is already completed',
-        data: { session },
+        data: session,
       });
     }
 
@@ -382,8 +382,8 @@ const completeSession = async (req, res, next) => {
 
     res.status(200).json({
       success: true,
-      message: 'Charging session completed successfully. Payment pending in Phase 5.',
-      data: { session: populated },
+      message: 'Charging session completed successfully.',
+      data: populated,
     });
   } catch (error) {
     next(error);
@@ -444,7 +444,7 @@ const stopSession = async (req, res, next) => {
     res.status(200).json({
       success: true,
       message: 'Charging session stopped',
-      data: { session },
+      data: session,
     });
   } catch (error) {
     next(error);
@@ -456,11 +456,12 @@ const stopSession = async (req, res, next) => {
 // @access  Private
 const getSessionHistory = async (req, res, next) => {
   try {
-    const { status, stationId, page = 1, limit = 10 } = req.query;
-    const query = {
-      userId: req.user._id,
-      status: { $in: ['completed', 'stopped', 'failed'] },
-    };
+    const { status, stationId, vehicleId, page = 1, limit = 10 } = req.query;
+    const query = {};
+
+    if (req.user.role !== 'admin') {
+      query.userId = req.user._id;
+    }
 
     if (status && status !== 'all') {
       query.status = status;
@@ -468,6 +469,10 @@ const getSessionHistory = async (req, res, next) => {
 
     if (stationId) {
       query.stationId = stationId;
+    }
+
+    if (vehicleId) {
+      query.vehicleId = vehicleId;
     }
 
     const pageNum = Math.max(1, parseInt(page, 10));
@@ -482,18 +487,18 @@ const getSessionHistory = async (req, res, next) => {
       .populate('vehicleId', 'brand model vehicleNumber batteryCapacity connectorType')
       .populate('stationId', 'name address city pricePerKwh')
       .populate('chargerId', 'chargerNumber powerRating connectorType chargingSpeed')
-      .populate('bookingId', 'bookingReference startTime endTime totalPrice');
+      .populate('paymentId', 'paymentReference invoiceNumber status totalAmount paidAt')
+      .populate('bookingId', 'bookingReference startTime endTime totalPrice paymentStatus');
 
     res.status(200).json({
       success: true,
-      data: {
-        items: sessions,
-        pagination: {
-          page: pageNum,
-          limit: limitNum,
-          total,
-          pages: Math.ceil(total / limitNum) || 1,
-        },
+      data: sessions,
+      pagination: {
+        page: pageNum,
+        limit: limitNum,
+        total,
+        totalPages: Math.ceil(total / limitNum) || 1,
+        pages: Math.ceil(total / limitNum) || 1,
       },
     });
   } catch (error) {
@@ -518,8 +523,8 @@ const getAllActiveSessions = async (req, res, next) => {
 
     res.status(200).json({
       success: true,
-      data: {
-        items: sessions,
+      data: sessions,
+      pagination: {
         total: sessions.length,
       },
     });

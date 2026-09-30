@@ -115,13 +115,11 @@ const createBooking = async (req, res, next) => {
     res.status(201).json({
       success: true,
       message: 'Booking confirmed successfully',
-      data: {
-        booking: populatedBooking,
-        qrPayload: {
-          type: 'EVCHARGE_BOOKING',
-          bookingReference,
-          verificationToken: rawQrToken,
-        },
+      data: populatedBooking,
+      qrPayload: {
+        type: 'EVCHARGE_BOOKING',
+        bookingReference,
+        verificationToken: rawQrToken,
       },
     });
   } catch (error) {
@@ -150,8 +148,8 @@ const getUserBookings = async (req, res, next) => {
 
     res.status(200).json({
       success: true,
-      data: {
-        items: bookings,
+      data: bookings,
+      pagination: {
         total: bookings.length,
       },
     });
@@ -186,7 +184,7 @@ const getBookingById = async (req, res, next) => {
 
     res.status(200).json({
       success: true,
-      data: { booking },
+      data: booking,
     });
   } catch (error) {
     next(error);
@@ -227,7 +225,7 @@ const cancelBooking = async (req, res, next) => {
     res.status(200).json({
       success: true,
       message: 'Booking cancelled successfully',
-      data: { booking },
+      data: booking,
     });
   } catch (error) {
     next(error);
@@ -261,14 +259,13 @@ const getAllBookings = async (req, res, next) => {
 
     res.status(200).json({
       success: true,
-      data: {
-        items: bookings,
-        pagination: {
-          page: pageNum,
-          limit: limitNum,
-          total,
-          pages: Math.ceil(total / limitNum) || 1,
-        },
+      data: bookings,
+      pagination: {
+        page: pageNum,
+        limit: limitNum,
+        total,
+        totalPages: Math.ceil(total / limitNum) || 1,
+        pages: Math.ceil(total / limitNum) || 1,
       },
     });
   } catch (error) {
@@ -308,6 +305,7 @@ const getAvailableSlots = async (req, res, next) => {
         date,
         chargerId,
         bookedSlots: existingBookings,
+        bookings: existingBookings,
       },
     });
   } catch (error) {

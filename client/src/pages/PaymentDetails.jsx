@@ -26,7 +26,7 @@ const PaymentDetails = () => {
       try {
         setLoading(true);
         const res = await getPaymentById(id);
-        setPayment(res.data);
+        setPayment(res.data?.payment || res.data);
       } catch (err) {
         setError(err.response?.data?.message || 'Failed to load payment details.');
       } finally {

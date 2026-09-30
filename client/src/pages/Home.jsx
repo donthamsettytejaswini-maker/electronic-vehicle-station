@@ -21,33 +21,38 @@ const Home = () => {
 
   return (
     <div className="space-y-16 sm:space-y-24 pb-16">
-      {/* Hero Section */}
-      <section className="relative overflow-hidden pt-12 sm:pt-20 pb-16 bg-gradient-to-b from-emerald-50/50 via-white to-slate-50 border-b border-slate-100">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-emerald-200/20 rounded-full blur-3xl pointer-events-none -z-10"></div>
+      {/* Hero Section with Cinematic EV Station Background */}
+      <section className="relative overflow-hidden rounded-3xl mx-4 sm:mx-6 lg:mx-8 border border-slate-200/80 dark:border-slate-800 shadow-2xl">
+        {/* Background Image Container */}
+        <div className="absolute inset-0 z-0">
+          <img
+            src="/ev-hero-bg.jpg"
+            alt="Ultra-Fast Smart EV Charging Hub"
+            className="w-full h-full object-cover object-center scale-100 filter brightness-90 contrast-105"
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-slate-950/90 via-slate-950/70 to-slate-900/40" />
+          <div className="absolute inset-0 bg-gradient-to-t from-slate-950/95 via-transparent to-slate-950/40" />
+        </div>
 
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-100/80 border border-emerald-300 text-emerald-800 text-xs font-semibold uppercase tracking-wider mb-6 shadow-sm">
-            <Sparkles className="w-4 h-4 text-emerald-600" />
-            Phase 1 Foundation Live
+        <div className="relative z-10 max-w-5xl mx-auto px-6 py-20 sm:py-28 text-left space-y-6">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-500/20 backdrop-blur-md border border-emerald-400/40 text-emerald-300 text-xs font-bold uppercase tracking-wider shadow-lg">
+            <Sparkles className="w-4 h-4 text-emerald-400" />
+            Clean Energy • Smart Grid Network
           </div>
 
-          <h1 className="text-4xl sm:text-6xl font-extrabold text-navy-950 tracking-tight max-w-4xl mx-auto leading-tight sm:leading-tight">
-            EV<span className="text-emerald-600">Charge</span>
+          <h1 className="text-4xl sm:text-6xl lg:text-7xl font-black text-white tracking-tight leading-[1.1] drop-shadow-lg max-w-3xl">
+            Powering the Future of <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-teal-300 to-cyan-400">Electric Mobility</span>
           </h1>
 
-          <p className="mt-4 text-xl sm:text-2xl font-semibold text-slate-700 max-w-2xl mx-auto">
-            Smart charging. Simple booking. Better journeys.
+          <p className="text-base sm:text-xl text-slate-200 max-w-2xl leading-relaxed drop-shadow">
+            Smart charging station network with real-time port telemetry, automated slot reservations, contactless QR check-in, and instant digital billing.
           </p>
 
-          <p className="mt-4 text-base sm:text-lg text-slate-500 max-w-2xl mx-auto leading-relaxed">
-            The intelligent cloud management platform for electric vehicle owners and station operators. Streamline discovery, reservations, and real-time charging.
-          </p>
-
-          <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
+          <div className="pt-4 flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
             {isAuthenticated ? (
               <Link
                 to={isAdmin ? '/admin/dashboard' : '/dashboard'}
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-xl text-base font-semibold text-white bg-emerald-600 hover:bg-emerald-700 shadow-lg shadow-emerald-600/30 hover:shadow-xl transition transform hover:-translate-y-0.5"
+                className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-2xl text-base font-bold text-white bg-emerald-600 hover:bg-emerald-500 shadow-xl shadow-emerald-600/40 transition transform hover:-translate-y-0.5"
               >
                 Go to {isAdmin ? 'Admin Dashboard' : 'User Dashboard'}
                 <ArrowRight className="w-5 h-5" />
@@ -55,39 +60,39 @@ const Home = () => {
             ) : (
               <>
                 <Link
-                  to="/register"
-                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-xl text-base font-semibold text-white bg-emerald-600 hover:bg-emerald-700 shadow-lg shadow-emerald-600/30 hover:shadow-xl transition transform hover:-translate-y-0.5"
+                  to="/stations"
+                  className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-2xl text-base font-bold text-white bg-emerald-600 hover:bg-emerald-500 shadow-xl shadow-emerald-600/40 transition transform hover:-translate-y-0.5"
                 >
-                  Get Started Free
+                  Find Charging Stations
                   <ArrowRight className="w-5 h-5" />
                 </Link>
                 <Link
-                  to="/login"
-                  className="w-full sm:w-auto inline-flex items-center justify-center px-7 py-3.5 rounded-xl text-base font-semibold text-slate-700 bg-white hover:bg-slate-50 border border-slate-200 shadow-sm transition"
+                  to="/register"
+                  className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-2xl text-base font-bold text-white bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/30 transition transform hover:-translate-y-0.5 shadow-lg"
                 >
-                  Sign In
+                  Create Account
                 </Link>
               </>
             )}
           </div>
 
-          {/* Quick Stat Highlights */}
-          <div className="mt-14 grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto text-left">
-            <div className="p-4 bg-white/80 backdrop-blur rounded-2xl border border-slate-200/80 shadow-sm">
-              <p className="text-2xl font-bold text-slate-900">100%</p>
-              <p className="text-xs font-medium text-slate-500">Secure JWT Auth</p>
+          {/* Quick Metrics in Glass Panel */}
+          <div className="pt-10 grid grid-cols-2 sm:grid-cols-4 gap-4 max-w-4xl">
+            <div className="p-4 bg-slate-900/80 backdrop-blur-xl rounded-2xl border border-white/10 shadow-lg">
+              <p className="text-2xl font-black text-emerald-400">17+</p>
+              <p className="text-xs font-semibold text-slate-300">Active Stations</p>
             </div>
-            <div className="p-4 bg-white/80 backdrop-blur rounded-2xl border border-slate-200/80 shadow-sm">
-              <p className="text-2xl font-bold text-slate-900">2 Roles</p>
-              <p className="text-xs font-medium text-slate-500">User & Admin Guard</p>
+            <div className="p-4 bg-slate-900/80 backdrop-blur-xl rounded-2xl border border-white/10 shadow-lg">
+              <p className="text-2xl font-black text-teal-300">49+</p>
+              <p className="text-xs font-semibold text-slate-300">Fast Chargers</p>
             </div>
-            <div className="p-4 bg-white/80 backdrop-blur rounded-2xl border border-slate-200/80 shadow-sm">
-              <p className="text-2xl font-bold text-emerald-600">REST API</p>
-              <p className="text-xs font-medium text-slate-500">MongoDB Atlas</p>
+            <div className="p-4 bg-slate-900/80 backdrop-blur-xl rounded-2xl border border-white/10 shadow-lg">
+              <p className="text-2xl font-black text-cyan-300">100%</p>
+              <p className="text-xs font-semibold text-slate-300">Green Energy</p>
             </div>
-            <div className="p-4 bg-white/80 backdrop-blur rounded-2xl border border-slate-200/80 shadow-sm">
-              <p className="text-2xl font-bold text-slate-900">5 Phases</p>
-              <p className="text-xs font-medium text-slate-500">Scalable Roadmap</p>
+            <div className="p-4 bg-slate-900/80 backdrop-blur-xl rounded-2xl border border-white/10 shadow-lg">
+              <p className="text-2xl font-black text-white">24/7</p>
+              <p className="text-xs font-semibold text-slate-300">Grid Availability</p>
             </div>
           </div>
         </div>

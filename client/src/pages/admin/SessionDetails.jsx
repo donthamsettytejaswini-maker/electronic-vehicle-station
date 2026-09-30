@@ -40,7 +40,7 @@ const SessionDetails = () => {
     try {
       setLoading(true);
       const res = await getSessionById(id);
-      setSession(res.data);
+      setSession(res.data?.session || res.data);
     } catch (err) {
       setError(err.response?.data?.message || "Failed to load session details.");
     } finally {
@@ -58,8 +58,9 @@ const SessionDetails = () => {
       joinSessionRoom(id);
 
       const handleUpdate = (updated) => {
-        if (updated && updated._id === id) {
-          setSession(updated);
+        const uSession = updated?.session || updated;
+        if (uSession && (uSession._id === id || uSession.id === id)) {
+          setSession(uSession);
         }
       };
 
@@ -79,7 +80,7 @@ const SessionDetails = () => {
     try {
       setIsStopping(true);
       const res = await stopSession(id, stopReason);
-      setSession(res.data);
+      setSession(res.data?.session || res.data);
       setShowStopModal(false);
     } catch (err) {
       alert(err.response?.data?.message || "Failed to stop session.");
