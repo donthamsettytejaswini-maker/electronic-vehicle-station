@@ -51,12 +51,11 @@ services:
         value: true
 
   # ---------------------------------------------------------------------------
-  # 2. Frontend Static Site (React / Vite Single Page Application)
+  # 2. Frontend Static Site (React / Vite Single Page Application - Global CDN)
   # ---------------------------------------------------------------------------
   - type: web
     name: evcharge-client
     runtime: static
-    region: oregon
     rootDir: client
     buildCommand: npm install && npm run build
     staticPublishPath: ./dist
