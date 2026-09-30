@@ -2,7 +2,11 @@ import { io } from "socket.io-client";
 
 let socket = null;
 
-const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || window.location.origin.replace(":5173", ":5000");
+const SOCKET_URL =
+  import.meta.env.VITE_SOCKET_URL ||
+  (import.meta.env.DEV
+    ? 'http://localhost:5000'
+    : 'https://evcharge-server.onrender.com');
 
 export const connectSocket = () => {
   if (!socket) {

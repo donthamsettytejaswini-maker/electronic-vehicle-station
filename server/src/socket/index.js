@@ -4,15 +4,23 @@ let io = null;
 
 const initSocket = (httpServer) => {
   const allowedOrigins = [
-    process.env.CLIENT_URL || 'http://localhost:5173',
+    process.env.CLIENT_URL,
+    'https://electronic-vehicle-station-svkh.vercel.app',
     'http://localhost:5173',
     'http://localhost:3000',
-  ];
+  ].filter(Boolean);
 
   io = new Server(httpServer, {
     cors: {
       origin: (origin, callback) => {
-        if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+        if (!origin) return callback(null, true);
+        const isAllowed =
+          allowedOrigins.indexOf(origin) !== -1 ||
+          origin.endsWith('.vercel.app') ||
+          origin.endsWith('.onrender.com') ||
+          origin.includes('localhost');
+
+        if (isAllowed) {
           callback(null, true);
         } else {
           callback(null, true);

@@ -60,18 +60,28 @@ app.use('/api', limiter);
 
 // CORS configuration
 const allowedOrigins = [
-  process.env.CLIENT_URL || 'http://localhost:5173',
+  process.env.CLIENT_URL,
+  'https://electronic-vehicle-station-svkh.vercel.app',
   'http://localhost:5173',
   'http://localhost:3000',
-];
+].filter(Boolean);
 
 app.use(
   cors({
     origin: (origin, callback) => {
-      if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+      // Allow requests with no origin (like mobile apps, curl, server-to-server)
+      if (!origin) return callback(null, true);
+      
+      const isAllowed =
+        allowedOrigins.indexOf(origin) !== -1 ||
+        origin.endsWith('.vercel.app') ||
+        origin.endsWith('.onrender.com') ||
+        origin.includes('localhost');
+
+      if (isAllowed) {
         callback(null, true);
       } else {
-        callback(null, true);
+        callback(null, true); // Permissive in dev/prod to avoid blocking
       }
     },
     credentials: true,
